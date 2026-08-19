@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (class_exists(\Illuminate\Foundation\Console\ServeCommand::class)) {
+            \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables[] = 'TMP';
+            \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables[] = 'TEMP';
+            \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables[] = 'TMPDIR';
+        }
     }
 }

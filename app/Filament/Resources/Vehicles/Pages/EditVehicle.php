@@ -16,4 +16,18 @@ class EditVehicle extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $this->ensurePrimaryImage();
+    }
+
+    protected function ensurePrimaryImage(): void
+    {
+        $vehicle = $this->record;
+
+        if ($vehicle->images()->exists() && $vehicle->images()->where('is_primary', true)->doesntExist()) {
+            $vehicle->images()->first()->update(['is_primary' => true]);
+        }
+    }
 }

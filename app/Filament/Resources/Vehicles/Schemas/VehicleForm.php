@@ -127,13 +127,27 @@ class VehicleForm
                                         ->image()
                                         ->disk('public')
                                         ->directory('vehicle-images')
-                                        ->required(),
+                                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                        ->maxSize(4096) // 4 MB
+                                        ->imageResizeMode('cover')
+                                        ->imageResizeTargetWidth('1600')
+                                        ->imageResizeTargetHeight('1200')
+                                        ->imagePreviewHeight('150')
+                                        ->required()
+                                        ->columnSpan(2),
+                                    Toggle::make('is_primary')
+                                        ->label('Photo principale')
+                                        ->live()
+                                        ->distinct()
+                                        ->fixIndistinctState(),
                                 ])
+                                ->columns(3)
                                 ->orderColumn('sort_order')
+                                ->defaultItems(3)
                                 ->addActionLabel('Ajouter une photo')
-                                ->defaultItems(0)
                                 ->collapsible()
-                                ->columns(1),
+                                ->deletable()
+                                ->reorderable(),
                         ]),
 
                     Tab::make('Publication')

@@ -39,12 +39,4 @@ class VehicleImage extends Model
                 : asset(Storage::url($this->path))
         );
     }
-    protected static function booted(): void
-{
-    static::creating(function (VehicleImage $image) {
-        if (! static::where('vehicle_id', $image->vehicle_id)->exists()) {
-            $image->is_primary = true;
-        }
-    });
-}
 }
