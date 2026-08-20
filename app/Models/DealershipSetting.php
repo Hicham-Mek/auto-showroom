@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DealershipSetting extends Model
 {
-    protected $fillable = [
-        'name', 'logo_path', 'phone', 'whatsapp', 'email', 'address',
-        'hours', 'latitude', 'longitude', 'facebook_url', 'instagram_url','tiktok_url'
-    ];
+    protected $guarded = [];
 
     /**
      * There's only ever one row. This gets it — or creates a sensible

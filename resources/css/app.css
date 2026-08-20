@@ -1,3 +1,18 @@
 @import "tailwindcss";
 @source "../views";
 @source "../js";
+
+
+@theme {
+    --color-asphalt: #14171A;
+    --color-beton: #F2F3F0;
+    --color-phare: #F2A93B;
+    --color-acier: #4A5560;
+    --color-disponible: #2E9E6D;
+    --color-reserve: #C98A2E;
+    --color-vendu: #B23B2E;
+
+    --font-display: 'Archivo Expanded', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-data: 'IBM Plex Mono', monospace;
+}
