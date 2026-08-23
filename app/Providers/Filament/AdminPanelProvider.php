@@ -29,9 +29,20 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->passwordReset()
+            ->brandName('AutoShowroom')
+            ->brandLogo(fn () => view('filament.admin.logo'))
+            ->brandLogoHeight('2.75rem')
             ->colors([
                 'primary' => Color::hex('#F2A93B'),
+                'gray' => Color::hex('#14171A'),
             ])
+            ->font('Inter', provider: \Filament\FontProviders\GoogleFontProvider::class)
+            ->darkMode(false)
+            ->globalSearch(false)
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): string => \Illuminate\Support\Facades\Vite::useBuildDirectory('build')->withEntryPoints(['resources/css/filament-custom.css'])->toHtml()
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -40,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
