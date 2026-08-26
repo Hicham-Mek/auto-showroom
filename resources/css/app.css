@@ -1,9 +1,15 @@
+/* Fonts used across the public site (headline, body, and mono/spec text) */
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+/* Material Symbols (the icon font used for <span class="material-symbols-outlined">) */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
 @import "tailwindcss";
 @source "../views";
 @source "../js";
 
-
 @theme {
+    /* ─── Brand Colours ─── */
     --color-asphalt: #14171A;
     --color-beton: #F2F3F0;
     --color-phare: #F2A93B;
@@ -12,7 +18,169 @@
     --color-reserve: #C98A2E;
     --color-vendu: #B23B2E;
 
-    --font-display: 'Archivo Narrow', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-data: 'IBM Plex Mono', monospace;
+    /* ─── Material Design 3 Colour System ─── */
+    --color-on-secondary-container: #606366;
+    --color-on-tertiary: #ffffff;
+    --color-inverse-surface: #2e312f;
+    --color-on-tertiary-container: #3f4a54;
+    --color-secondary-fixed-dim: #c5c6ca;
+    --color-on-primary-container: #664000;
+    --color-surface: #f2f3f0;
+    --color-inverse-on-surface: #f0f1ee;
+    --color-on-surface-variant: #514535;
+    --color-error: #ba1a1a;
+    --color-surface-container: #edeeeb;
+    --color-primary-fixed: #ffddb5;
+    --color-error-container: #ffdad6;
+    --color-outline: #847563;
+    --color-on-tertiary-fixed-variant: #3d4853;
+    --color-on-primary-fixed: #2a1800;
+    --color-primary-container: #f2a93b;
+    --color-surface-bright: #f2f3f0;
+    --color-surface-dim: #d9dad7;
+    --color-on-primary: #ffffff;
+    --color-secondary-container: #dee0e4;
+    --color-on-surface: #14171a;
+    --color-on-error: #ffffff;
+    --color-primary: #f2a93b;
+    --color-surface-tint: #835400;
+    --color-on-secondary-fixed: #191c1f;
+    --color-tertiary-fixed: #d8e4f1;
+    --color-primary-fixed-dim: #ffb956;
+    --color-background: #f2f3f0;
+    --color-tertiary: #55606b;
+    --color-surface-container-highest: #e2e3e0;
+    --color-secondary-fixed: #e1e2e6;
+    --color-on-background: #14171a;
+    --color-tertiary-container: #aeb9c6;
+    --color-on-error-container: #93000a;
+    --color-tertiary-fixed-dim: #bcc8d5;
+    --color-on-tertiary-fixed: #121d26;
+    --color-surface-variant: #e2e3e0;
+    --color-on-primary-fixed-variant: #633f00;
+    --color-surface-container-lowest: #ffffff;
+    --color-secondary: #5c5f62;
+    --color-on-secondary-fixed-variant: #44474a;
+    --color-outline-variant: #d6c3af;
+    --color-surface-container-high: #e7e8e6;
+    --color-on-secondary: #ffffff;
+    --color-surface-container-low: #f3f4f1;
+    --color-inverse-primary: #ffb956;
+
+    /* ─── Stitch font-family tokens ─── */
+    --font-headline-xl: 'Archivo Narrow', sans-serif;
+    --font-headline-lg: 'Archivo Narrow', sans-serif;
+    --font-headline-md: 'Archivo Narrow', sans-serif;
+    --font-body-lg: 'Inter', sans-serif;
+    --font-body-md: 'Inter', sans-serif;
+    --font-body-sm: 'Inter', sans-serif;
+    --font-spec-label: 'IBM Plex Mono', monospace;
+    --font-spec-value: 'IBM Plex Mono', monospace;
+
+    /* ─── Stitch font-size tokens ─── */
+    --text-headline-xl: 32px;
+    --text-headline-xl--line-height: 1.1;
+    --text-headline-xl--letter-spacing: -0.02em;
+    --text-headline-xl--font-weight: 700;
+
+    --text-headline-lg: 24px;
+    --text-headline-lg--line-height: 1.2;
+    --text-headline-lg--font-weight: 700;
+
+    --text-headline-md: 20px;
+    --text-headline-md--line-height: 1.2;
+    --text-headline-md--font-weight: 600;
+
+    --text-body-lg: 18px;
+    --text-body-lg--line-height: 1.6;
+    --text-body-lg--font-weight: 400;
+
+    --text-body-md: 16px;
+    --text-body-md--line-height: 1.5;
+    --text-body-md--font-weight: 400;
+
+    --text-body-sm: 14px;
+    --text-body-sm--line-height: 1.5;
+    --text-body-sm--font-weight: 400;
+
+    --text-spec-label: 12px;
+    --text-spec-label--line-height: 1;
+    --text-spec-label--letter-spacing: 0.1em;
+    --text-spec-label--font-weight: 500;
+
+    --text-spec-value: 14px;
+    --text-spec-value--line-height: 1;
+    --text-spec-value--letter-spacing: 0.05em;
+    --text-spec-value--font-weight: 600;
+
+    /* ─── Stitch spacing tokens ─── */
+    --spacing-xs: 4px;
+    --spacing-sm: 12px;
+    --spacing-base: 8px;
+    --spacing-md: 20px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+    --spacing-gutter: 16px;
+    --spacing-margin-mobile: 20px;
+
+    /* ─── Border Radius ─── */
+    --radius-DEFAULT: 8px;
+    --radius-lg: 8px;
+    --radius-xl: 8px;
+    --radius-full: 0.75rem;
+}
+
+@layer base {
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        overscroll-behavior: none;
+    }
+
+    main> :first-child {
+        margin-top: 0 !important;
+    }
+
+    main> :last-child {
+        margin-bottom: 0 !important;
+    }
+}
+
+@layer utilities {
+
+    /* Makes the Material Symbols font actually render as icons instead of ligature text */
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* Hide scrollbars, matches the Stitch mockup's chrome-less look */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Faint technical grid used on dark (Asphalt) sections instead of a stock
+     photo or gradient — keeps the "precision tool" feel without relying on
+     an external image URL that isn't backed by real data. */
+    .bg-grid-line {
+        background-image:
+            repeating-linear-gradient(to right, rgba(240, 241, 238, 0.06) 0, rgba(240, 241, 238, 0.06) 1px, transparent 1px, transparent 64px),
+            repeating-linear-gradient(to bottom, rgba(240, 241, 238, 0.06) 0, rgba(240, 241, 238, 0.06) 1px, transparent 1px, transparent 64px);
+    }
 }

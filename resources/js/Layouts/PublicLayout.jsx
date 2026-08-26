@@ -1,92 +1,174 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 
+const NAV_LINKS = [
+    { label: 'Accueil', href: '/' },
+    { label: 'Inventaire', href: '/inventaire' },
+    { label: 'À propos', href: '/a-propos' },
+    { label: 'Contact', href: '/contact' },
+];
+
 export default function PublicLayout({ children }) {
+    // `dealership` is shared from a Laravel middleware (HandleInertiaRequests) so every
+    // page can show the phone number / WhatsApp link without passing it manually each time.
     const { dealership } = usePage().props;
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const currentPath = usePage().url;
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const whatsappNumber = dealership?.whatsapp ?? '';
+    const phoneNumber = dealership?.phone ?? '';
 
     return (
-        <div className="min-h-screen flex flex-col font-body bg-beton text-asphalt">
-            <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-                <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <div className="flex-shrink-0">
-                        <Link href="/" className="font-display font-bold text-xl flex items-center">
-                            {dealership?.logo_path ? (
-                                <img src={`/storage/${dealership.logo_path}`} alt={dealership.name} className="h-10 w-auto" />
-                            ) : (
-                                <span>{dealership?.name || 'Dealership'}</span>
-                            )}
-                        </Link>
-                    </div>
+        <div className="bg-beton font-body-md text-on-surface antialiased">
+            <header className="fixed top-0 w-full z-50 bg-beton border-b border-outline-variant">
+                <div className="h-16 w-full px-margin-mobile lg:px-lg flex items-center justify-between mx-auto">
+                    <Link href="/" className="flex items-center gap-base">
+                        <img
+                            alt="AutoShowroom Logo"
+                            className="h-8 w-auto object-contain"
+                            src="/images/logo.png"
+                        />
+                        <span className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+                            AutoShowroom
+                        </span>
+                    </Link>
 
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex space-x-8 items-center">
-                        <Link href="/" className="text-acier hover:text-asphalt font-medium">Accueil</Link>
-                        <Link href="/vehicules" className="text-acier hover:text-asphalt font-medium">Véhicules</Link>
-                        <Link href="/a-propos" className="text-acier hover:text-asphalt font-medium">À Propos</Link>
-                        {dealership?.phone && (
-                            <a href={`tel:${dealership.phone}`} className="bg-asphalt text-white px-4 py-2 rounded font-medium hover:bg-acier transition shadow-sm">
-                                Appeler: {dealership.phone}
-                            </a>
-                        )}
-                    </div>
+                    <nav className="hidden md:flex items-center gap-lg">
+                        {NAV_LINKS.map((link) => {
+                            const isActive = currentPath === link.href;
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={`font-body-sm text-body-sm transition-colors uppercase tracking-widest ${isActive
+                                            ? 'text-phare font-bold'
+                                            : 'text-on-surface-variant hover:text-phare'
+                                        }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
 
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden flex items-center">
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-asphalt p-2">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {isMenuOpen ? (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                ) : (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                )}
-                            </svg>
+                    <div className="flex items-center gap-md">
+                        <div className="w-8 h-8 rounded-full bg-[#14171a] flex items-center justify-center">
+                            <span className="material-symbols-outlined text-[#f2a93b] text-[18px]">
+                                person
+                            </span>
+                        </div>
+                        {/* Simple show/hide toggle — no router or animation library needed for one panel */}
+                        <button
+                            type="button"
+                            className="md:hidden text-on-surface"
+                            onClick={() => setMenuOpen((open) => !open)}
+                            aria-label="Ouvrir le menu"
+                        >
+                            <span className="material-symbols-outlined">
+                                {menuOpen ? 'close' : 'menu'}
+                            </span>
                         </button>
                     </div>
-                </nav>
-                
-                {/* Mobile Menu */}
-                {isMenuOpen && (
-                    <div className="md:hidden bg-white border-t border-gray-100 shadow-md">
-                        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                            <Link href="/" className="block px-3 py-2 text-asphalt font-medium" onClick={() => setIsMenuOpen(false)}>Accueil</Link>
-                            <Link href="/vehicules" className="block px-3 py-2 text-asphalt font-medium" onClick={() => setIsMenuOpen(false)}>Véhicules</Link>
-                            <Link href="/a-propos" className="block px-3 py-2 text-asphalt font-medium" onClick={() => setIsMenuOpen(false)}>À Propos</Link>
-                            {dealership?.phone && (
-                                <a href={`tel:${dealership.phone}`} className="block px-3 py-2 text-phare font-medium">
-                                    Appeler: {dealership.phone}
-                                </a>
-                            )}
-                        </div>
-                    </div>
+                </div>
+
+                {menuOpen && (
+                    <nav className="md:hidden flex flex-col bg-beton border-t border-outline-variant px-margin-mobile py-sm">
+                        {NAV_LINKS.map((link) => {
+                            const isActive = currentPath === link.href;
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={() => setMenuOpen(false)}
+                                    className={`py-sm font-body-sm uppercase tracking-widest ${isActive ? 'text-phare font-bold' : 'text-on-surface-variant'
+                                        }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
                 )}
             </header>
 
-            <main className="flex-grow">
-                {children}
-            </main>
+            <main className="w-full pt-16">{children}</main>
 
-            <footer className="bg-asphalt text-white mt-12 py-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div>
-                        <span className="font-display font-bold text-xl">{dealership?.name || 'Dealership'}</span>
-                        {dealership?.address && <p className="text-gray-400 mt-3 text-sm leading-relaxed">{dealership.address}</p>}
+            <footer className="w-full bg-[#14171A] text-on-tertiary py-xl mt-xl">
+                <div className="w-full px-margin-mobile lg:px-lg mx-auto flex flex-col md:flex-row justify-between gap-xl">
+                    <div className="max-w-xs">
+                        <div className="flex items-center gap-base mb-md">
+                            <img
+                                alt="AutoShowroom Logo"
+                                className="h-6 w-auto object-contain brightness-0 invert"
+                                src="/images/logo.png"
+                            />
+                            <span className="font-headline-md text-headline-md">AutoShowroom</span>
+                        </div>
+                        <p className="font-body-sm text-body-sm text-tertiary-fixed-dim">
+                            L'excellence automobile en Algérie. Performance, fiabilité et service premium
+                            pour votre prochain véhicule.
+                        </p>
                     </div>
-                    <div>
-                        <h4 className="font-bold text-lg mb-3">Contact</h4>
-                        {dealership?.phone && <p className="text-gray-400 text-sm">Tél: {dealership.phone}</p>}
-                        {dealership?.email && <p className="text-gray-400 text-sm">Email: {dealership.email}</p>}
-                    </div>
-                    <div>
-                        <h4 className="font-bold text-lg mb-3">Réseaux Sociaux</h4>
-                        <div className="flex space-x-4">
-                            {dealership?.facebook_url && <a href={dealership.facebook_url} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition">Facebook</a>}
-                            {dealership?.instagram_url && <a href={dealership.instagram_url} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition">Instagram</a>}
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-lg">
+                        <div className="flex flex-col gap-sm">
+                            <span className="font-spec-label text-spec-label text-on-tertiary/60">
+                                EXPLORER
+                            </span>
+                            <Link className="text-body-sm" href="/">
+                                Accueil
+                            </Link>
+                            <Link className="text-body-sm" href="/inventaire">
+                                Inventaire
+                            </Link>
+                            <Link className="text-body-sm" href="/a-propos">
+                                À propos
+                            </Link>
+                        </div>
+                        <div className="flex flex-col gap-sm">
+                            <span className="font-spec-label text-spec-label text-on-tertiary/60">INFO</span>
+                            <Link className="text-body-sm" href="/contact">
+                                Contact
+                            </Link>
+                            <Link className="text-body-sm" href="/mentions-legales">
+                                Mentions Légales
+                            </Link>
+                        </div>
+                        <div className="flex flex-col gap-sm">
+                            <span className="font-spec-label text-spec-label text-on-tertiary/60">
+                                SOCIAL
+                            </span>
+                            <a className="text-body-sm" href={dealership?.facebook ?? '#'} target="_blank" rel="noreferrer">
+                                Facebook
+                            </a>
+                            <a className="text-body-sm" href={dealership?.instagram ?? '#'} target="_blank" rel="noreferrer">
+                                Instagram
+                            </a>
                         </div>
                     </div>
+
+                    <div className="flex flex-col items-start gap-md">
+                        <span className="font-spec-label text-spec-label text-on-tertiary/60 uppercase">
+                            Assistance Directe
+                        </span>
+                        <a
+                            className="flex items-center gap-sm bg-[#835400] px-lg py-sm rounded-lg hover:bg-[#664000] transition-all text-on-primary font-headline-md text-headline-md"
+                            href={`https://wa.me/${whatsappNumber}`}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <span className="material-symbols-outlined">chat</span> WhatsApp
+                        </a>
+                    </div>
                 </div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-                    &copy; {new Date().getFullYear()} {dealership?.name}. Tous droits réservés.
+
+                <div className="w-full px-margin-mobile lg:px-lg mx-auto mt-xl pt-lg border-t border-on-tertiary/10 flex flex-col md:flex-row justify-between items-center gap-md">
+                    <span className="font-spec-value text-spec-value text-on-tertiary/40">
+                        © {new Date().getFullYear()} AUTOSHOWROOM. ALGERIA.
+                    </span>
+                    <span className="font-spec-value text-spec-value text-on-tertiary/40">
+                        CONSTRUIT POUR LA ROUTE.
+                    </span>
                 </div>
             </footer>
         </div>
