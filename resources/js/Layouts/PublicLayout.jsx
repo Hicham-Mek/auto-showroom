@@ -3,9 +3,8 @@ import { Link, usePage } from '@inertiajs/react';
 
 const NAV_LINKS = [
     { label: 'Accueil', href: '/' },
-    { label: 'Inventaire', href: '/inventaire' },
+    { label: 'Inventaire', href: '/vehicules' },
     { label: 'À propos', href: '/a-propos' },
-    { label: 'Contact', href: '/contact' },
 ];
 
 export default function PublicLayout({ children }) {
@@ -22,14 +21,20 @@ export default function PublicLayout({ children }) {
         <div className="bg-beton font-body-md text-on-surface antialiased">
             <header className="fixed top-0 w-full z-50 bg-beton border-b border-outline-variant">
                 <div className="h-16 w-full px-margin-mobile lg:px-lg flex items-center justify-between mx-auto">
-                    <Link href="/" className="flex items-center gap-base">
-                        <img
-                            alt="AutoShowroom Logo"
-                            className="h-8 w-auto object-contain"
-                            src="/images/logo.png"
-                        />
+                    <Link href="/" className="flex items-center gap-2.5">
+                        {dealership?.logo_path ? (
+                            <img
+                                src={dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
+                                alt={dealership.name || 'AutoShowroom'}
+                                className="h-8 w-auto object-contain"
+                            />
+                        ) : (
+                            <div className="w-8 h-8 rounded-lg bg-asphalt flex items-center justify-center text-phare shadow-sm">
+                                <span className="material-symbols-outlined text-[20px]">directions_car</span>
+                            </div>
+                        )}
                         <span className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
-                            AutoShowroom
+                            {dealership?.name || 'AutoShowroom'}
                         </span>
                     </Link>
 
@@ -41,8 +46,8 @@ export default function PublicLayout({ children }) {
                                     key={link.href}
                                     href={link.href}
                                     className={`font-body-sm text-body-sm transition-colors uppercase tracking-widest ${isActive
-                                            ? 'text-phare font-bold'
-                                            : 'text-on-surface-variant hover:text-phare'
+                                        ? 'text-phare font-bold'
+                                        : 'text-on-surface-variant hover:text-phare'
                                         }`}
                                 >
                                     {link.label}
@@ -95,14 +100,22 @@ export default function PublicLayout({ children }) {
 
             <footer className="w-full bg-[#14171A] text-on-tertiary py-xl mt-xl">
                 <div className="w-full px-margin-mobile lg:px-lg mx-auto flex flex-col md:flex-row justify-between gap-xl">
-                    <div className="max-w-xs">
-                        <div className="flex items-center gap-base mb-md">
-                            <img
-                                alt="AutoShowroom Logo"
-                                className="h-6 w-auto object-contain brightness-0 invert"
-                                src="/images/logo.png"
-                            />
-                            <span className="font-headline-md text-headline-md">AutoShowroom</span>
+                    <div className="w-full md:w-2/3">
+                        <div className="flex items-center gap-2.5 mb-md">
+                            {dealership?.logo_path ? (
+                                <img
+                                    src={dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
+                                    alt={dealership.name || 'AutoShowroom'}
+                                    className="h-6 w-auto object-contain brightness-0 invert"
+                                />
+                            ) : (
+                                <div className="w-7 h-7 rounded-lg bg-phare/20 border border-phare/40 flex items-center justify-center text-phare">
+                                    <span className="material-symbols-outlined text-[18px]">directions_car</span>
+                                </div>
+                            )}
+                            <span className="font-headline-md text-headline-md text-white">
+                                {dealership?.name || 'AutoShowroom'}
+                            </span>
                         </div>
                         <p className="font-body-sm text-body-sm text-tertiary-fixed-dim">
                             L'excellence automobile en Algérie. Performance, fiabilité et service premium
@@ -118,7 +131,7 @@ export default function PublicLayout({ children }) {
                             <Link className="text-body-sm" href="/">
                                 Accueil
                             </Link>
-                            <Link className="text-body-sm" href="/inventaire">
+                            <Link className="text-body-sm" href="/vehicules">
                                 Inventaire
                             </Link>
                             <Link className="text-body-sm" href="/a-propos">

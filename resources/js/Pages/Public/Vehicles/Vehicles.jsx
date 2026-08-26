@@ -1,55 +1,86 @@
-import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import PublicLayout from '@/Layouts/PublicLayout';
-import VehicleCard from '@/Components/VehicleCard';
+import PublicLayout from '../../../Layouts/PublicLayout';
+import PageHeader from '../../../Components/Public/PageHeader';
+import VehicleCard from '../../../Components/VehicleCard';
 
-export default function Vehicles({ vehicles }) {
+export default function Vehicles({ vehicles, filters = {}, makes = [] }) {
+    // `vehicles` may arrive as a plain array, or as a Laravel paginator object
+    // ({ data, links, meta }) if the backend uses ->paginate(). Support both
+    // instead of assuming one shape.
+    const items = Array.isArray(vehicles) ? vehicles : vehicles?.data ?? [];
+    const paginationLinks = Array.isArray(vehicles) ? null : vehicles?.links ?? null;
+    const total = vehicles?.meta?.total ?? items.length;
+
     return (
         <PublicLayout>
-            <Head title="Tous nos véhicules | Showroom" />
+            <Head title="Inventaire" />
 
-            <div className="bg-asphalt py-16 border-b-4 border-phare">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                    <h1 className="text-4xl font-display font-bold mb-4">Notre Stock</h1>
-                    <p className="text-xl text-gray-300">Découvrez l'ensemble de nos véhicules disponibles.</p>
-                </div>
-            </div>
+            <PageHeader
+                eyebrow="Inventaire"
+                title="Tous nos véhicules"
+                subtitle="Parcourez le stock disponible et filtrez par marque ou budget."
+            />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {vehicles.data.length > 0 ? (
-                        vehicles.data.map(vehicle => (
-                            <VehicleCard key={vehicle.id} vehicle={vehicle} />
-                        ))
+            <section className="w-full bg-beton py-xl lg:py-24">
+                <div className="max-w-7xl mx-auto px-margin-mobile lg:px-lg flex flex-col gap-8">
+
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">
+                        {total} véhicule{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''}
+                    </p>
+
+                    {items.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {items.map((vehicle) => (
+                                <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                            ))}
+                        </div>
                     ) : (
-                        <div className="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
-                            <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                            <p className="text-gray-500 font-medium text-lg">Aucun véhicule n'est disponible pour le moment.</p>
+                        <div className="flex flex-col items-center gap-3 text-center py-16 border border-outline-variant/60 rounded-lg">
+                            <span className="material-symbols-outlined text-on-surface-variant text-3xl">
+                                search_off
+                            </span>
+                            <p className="font-body-md text-body-md text-on-surface-variant">
+                                Aucun véhicule ne correspond à votre recherche.
+                            </p>
+                            <Link
+                                href="/vehicules"
+                                className="font-body-sm text-body-sm font-semibold text-phare hover:underline"
+                            >
+                                Réinitialiser les filtres
+                            </Link>
                         </div>
                     )}
-                </div>
 
-                {/* Pagination */}
-                {vehicles.links && vehicles.links.length > 3 && (
-                    <div className="mt-16 flex justify-center flex-wrap gap-2">
-                        {vehicles.links.map((link, i) => (
-                            <Link
-                                key={i}
-                                href={link.url || '#'}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                className={`px-4 py-2 border rounded font-medium transition-colors ${
-                                    link.active
-                                        ? 'bg-asphalt text-white border-asphalt shadow'
-                                        : link.url
-                                            ? 'bg-white text-asphalt border-gray-300 hover:bg-gray-50'
-                                            : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                                }`}
-                                preserveScroll
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+                    {/* Laravel's default paginator sends 3+ link entries (Previous, page
+              numbers, Next) even with a single page, so only render when
+              there's something meaningful to paginate through. */}
+                    {paginationLinks && paginationLinks.length > 3 && (
+                        <nav aria-label="Pagination" className="flex flex-wrap items-center justify-center gap-2 pt-4">
+                            {paginationLinks.map((link, index) =>
+                                link.url ? (
+                                    <Link
+                                        key={index}
+                                        href={link.url}
+                                        preserveScroll
+                                        aria-current={link.active ? 'page' : undefined}
+                                        className={`px-3 py-2 rounded-lg border font-spec-value text-spec-value ${link.active
+                                            ? 'bg-phare border-phare text-asphalt'
+                                            : 'border-outline-variant text-on-surface hover:bg-surface-container-highest'
+                                            }`}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ) : (
+                                    <span
+                                        key={index}
+                                        className="px-3 py-2 font-spec-value text-spec-value text-on-surface-variant/50"
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                )
+                            )}
+                        </nav>
+                    )}
+                </div>
+            </section>
         </PublicLayout>
     );
 }

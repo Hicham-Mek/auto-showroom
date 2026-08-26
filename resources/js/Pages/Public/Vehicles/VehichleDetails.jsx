@@ -1,166 +1,157 @@
-import React from 'react';
-import { Head, usePage } from '@inertiajs/react';
-import PublicLayout from '@/Layouts/PublicLayout';
+import { useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
+import PublicLayout from '../../../Layouts/PublicLayout';
+import SpecStrip from '../../../Components/Public/Specstrip';
+import { getVehicleStatus } from '../../../Components/Public/vehicleStatus';
 
-export default function VehichleDetails({ vehicle }) {
-    const { dealership } = usePage().props;
+export default function VehicleDetails({ vehicle, dealership }) {
+    // Support either a gallery (`vehicle.images`) or a single `vehicle.image`,
+    // without assuming the backend already sends an array.
+    const images = vehicle?.images?.length > 0 ? vehicle.images : vehicle?.image ? [vehicle.image] : [];
+    const [activeImage, setActiveImage] = useState(0);
 
-    const message = `Bonjour, je suis intéressé par votre ${vehicle.brand} ${vehicle.model} (${vehicle.year}). Est-elle toujours disponible ?`;
-    const whatsappUrl = dealership?.whatsapp 
-        ? `https://wa.me/${dealership.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`
-        : '#';
+    if (!vehicle) {
+        return (
+            <PublicLayout>
+                <Head title="Véhicule introuvable" />
+                <div className="max-w-3xl mx-auto px-margin-mobile lg:px-lg py-24 text-center">
+                    <h1 className="font-headline-lg text-headline-lg text-on-surface mb-4">
+                        Véhicule introuvable
+                    </h1>
+                    <p className="font-body-md text-body-md text-on-surface-variant mb-8">
+                        Ce véhicule n'est plus disponible ou a été retiré de l'inventaire.
+                    </p>
+                    <Link
+                        href="/vehicules"
+                        className="inline-block px-6 py-3 bg-phare text-asphalt font-headline-md text-base font-bold uppercase tracking-wide rounded-lg hover:bg-primary-fixed-dim transition-colors"
+                    >
+                        Retour à l'inventaire
+                    </Link>
+                </div>
+            </PublicLayout>
+        );
+    }
+
+    const status = getVehicleStatus(vehicle.status);
+    const isAvailable = vehicle.status === 'disponible';
+    const whatsappNumber = dealership?.whatsapp ?? '';
+    const phoneNumber = dealership?.phone ?? '';
+    const whatsappMessage = encodeURIComponent(
+        `Bonjour, je suis intéressé(e) par le véhicule "${vehicle.title}" à ${vehicle.price != null ? `${new Intl.NumberFormat('fr-DZ').format(vehicle.price)} DA` : 'un prix à négocier'
+        }.`
+    );
+
+    const specs = [
+        { label: 'Année', value: vehicle.year },
+        { label: 'Km', value: vehicle.mileage != null ? Number(vehicle.mileage).toLocaleString('fr-FR') : null },
+        { label: 'Carburant', value: vehicle.fuel },
+        { label: 'Boîte', value: vehicle.transmission },
+        { label: 'Documents', value: vehicle.documentType },
+        { label: 'Localisation', value: vehicle.location },
+    ];
 
     return (
         <PublicLayout>
-            <Head title={`${vehicle.brand} ${vehicle.model} | Showroom`} />
+            <Head title={vehicle.title ?? 'Véhicule'} />
 
-            <div className="bg-gray-50 min-h-screen py-10 border-t border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    
-                    {/* Breadcrumb */}
-                    <div className="text-sm text-gray-500 mb-8 font-medium">
-                        <a href="/" className="hover:text-asphalt transition">Accueil</a>
-                        <span className="mx-2 text-gray-400">&gt;</span>
-                        <a href="/vehicules" className="hover:text-asphalt transition">Véhicules</a>
-                        <span className="mx-2 text-gray-400">&gt;</span>
-                        <span className="text-asphalt font-bold">{vehicle.brand} {vehicle.model}</span>
+            <div className="max-w-7xl mx-auto px-margin-mobile lg:px-lg py-lg lg:py-xl">
+                <Link
+                    href="/vehicules"
+                    className="inline-flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors mb-6"
+                >
+                    <span className="material-symbols-outlined text-lg" aria-hidden="true">
+                        arrow_back
+                    </span>
+                    Retour à l'inventaire
+                </Link>
+
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+                    {/* Gallery */}
+                    <div className="lg:col-span-3 flex flex-col gap-3">
+                        <div className="w-full aspect-[4/3] bg-asphalt rounded-lg overflow-hidden">
+                            {images.length > 0 && (
+                                <img
+                                    src={images[activeImage]}
+                                    alt={`${vehicle.title ?? 'Véhicule'} — photo ${activeImage + 1}`}
+                                    loading="lazy"
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
+                        </div>
+
+                        {images.length > 1 && (
+                            <div className="flex gap-3 overflow-x-auto pb-1">
+                                {images.map((image, index) => (
+                                    <button
+                                        key={image}
+                                        type="button"
+                                        onClick={() => setActiveImage(index)}
+                                        aria-label={`Voir la photo ${index + 1}`}
+                                        aria-current={index === activeImage}
+                                        className={`shrink-0 w-20 aspect-[4/3] rounded overflow-hidden border-2 transition-colors ${index === activeImage ? 'border-phare' : 'border-transparent hover:border-outline-variant'
+                                            }`}
+                                    >
+                                        <img src={image} alt="" className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16">
-                        
-                        {/* Image Gallery */}
-                        <div className="space-y-4">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-[400px] md:h-[550px]">
-                                {vehicle.images && vehicle.images.length > 0 ? (
-                                    <img 
-                                        src={`/storage/${vehicle.images.find(img => img.is_primary)?.path || vehicle.images[0].path}`} 
-                                        alt={`${vehicle.brand} ${vehicle.model}`}
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-100 font-medium">
-                                        <svg className="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        Pas d'image disponible
-                                    </div>
-                                )}
-                            </div>
-                            
-                            {/* Thumbnails */}
-                            {vehicle.images && vehicle.images.length > 1 && (
-                                <div className="grid grid-cols-5 gap-3">
-                                    {vehicle.images.map((img) => (
-                                        <div key={img.id} className="h-20 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:border-phare transition">
-                                            <img src={`/storage/${img.path}`} alt="thumbnail" className="w-full h-full object-cover" />
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                    {/* Details */}
+                    <div className="lg:col-span-2 flex flex-col gap-6">
+                        <div className="flex items-start justify-between gap-4">
+                            <h1 className="font-headline-lg text-headline-lg md:text-3xl text-on-surface">
+                                {vehicle.title}
+                            </h1>
+                            <span className="shrink-0 inline-flex items-center px-2 py-1 bg-acier text-on-tertiary font-spec-label text-xs uppercase tracking-wider rounded">
+                                <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-2`} />
+                                {status.label}
+                            </span>
                         </div>
 
-                        {/* Details & CTAs */}
-                        <div>
-                            <div className="mb-10">
-                                <h1 className="text-4xl font-display font-bold text-asphalt mb-2">
-                                    {vehicle.brand} {vehicle.model}
-                                </h1>
-                                <p className="text-gray-500 font-data uppercase tracking-wider text-sm mb-6 border-b border-gray-200 pb-5">
-                                    {vehicle.condition} &middot; Ajouté récemment
-                                </p>
-                                
-                                <div className="text-4xl font-bold text-asphalt mb-3">
-                                    {vehicle.price ? (
-                                        new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 }).format(vehicle.price)
-                                    ) : (
-                                        <span className="text-2xl text-gray-500 font-normal italic">Contactez-nous pour le prix</span>
-                                    )}
-                                </div>
-                                {vehicle.negotiable && (
-                                    <span className="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded font-bold uppercase tracking-wide">Prix négociable</span>
-                                )}
-                            </div>
+                        {vehicle.price != null && (
+                            <p className="font-spec-value text-2xl font-bold text-on-surface">
+                                {new Intl.NumberFormat('fr-DZ').format(vehicle.price)} DA
+                            </p>
+                        )}
 
-                            {/* CTAs */}
-                            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                                {dealership?.whatsapp && (
-                                    <a 
-                                        href={whatsappUrl} 
-                                        target="_blank" 
+                        <SpecStrip specs={specs} columns={2} />
+
+                        {vehicle.description && (
+                            <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                {vehicle.description}
+                            </p>
+                        )}
+
+                        {isAvailable && (
+                            <div className="flex flex-col gap-3 pt-2">
+                                {whatsappNumber && (
+                                    <a
+                                        href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+                                        target="_blank"
                                         rel="noreferrer"
-                                        className="flex-1 bg-phare hover:bg-yellow-500 text-asphalt font-bold text-lg py-4 px-6 rounded-xl text-center transition-all duration-200 shadow-sm flex justify-center items-center group"
+                                        className="flex items-center justify-center gap-2 px-6 py-3.5 bg-phare text-asphalt font-headline-md text-base font-bold uppercase tracking-wide rounded-lg hover:bg-primary-fixed-dim transition-colors"
                                     >
-                                        <svg className="w-6 h-6 mr-2 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.125-.345-.156-.816-.36-1.524-.766-1.59-1.332-2.73-3.197-2.825-3.328-.095-.132-.676-.902-.676-1.72 0-.817.427-1.22.577-1.378.148-.158.324-.197.433-.197.108 0 .216 0 .304.004.095.004.225-.037.351.268.132.321.455 1.112.497 1.196.042.084.071.182.02.287-.049.102-.075.165-.148.246-.073.083-.153.171-.215.226-.073.064-.149.131-.067.273.082.14 3.619.646.611 1.042.247.382.527.76.713.843.186.082.3.066.417-.067.118-.135.508-.592.645-.794.137-.202.271-.168.441-.104.17.064 1.077.508 1.261.6.184.092.308.14.353.218.046.078.046.452-.098.857z" />
-                                        </svg>
-                                        WhatsApp
+                                        <span className="material-symbols-outlined text-xl" aria-hidden="true">
+                                            chat
+                                        </span>
+                                        Négocier sur WhatsApp
                                     </a>
                                 )}
-                                {dealership?.phone && (
-                                    <a 
-                                        href={`tel:${dealership.phone}`} 
-                                        className="flex-1 bg-asphalt hover:bg-acier text-white border border-acier font-bold text-lg py-4 px-6 rounded-xl text-center transition-all duration-200 shadow-sm flex justify-center items-center group"
+                                {phoneNumber && (
+                                    <a
+                                        href={`tel:${phoneNumber}`}
+                                        className="flex items-center justify-center gap-2 px-6 py-3.5 bg-transparent border-2 border-acier text-on-surface font-body-md text-base font-medium rounded-lg hover:bg-surface-container-highest transition-colors"
                                     >
-                                        <svg className="w-5 h-5 mr-2 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                                        Appeler
+                                        <span className="material-symbols-outlined text-xl" aria-hidden="true">
+                                            call
+                                        </span>
+                                        Appeler le concessionnaire
                                     </a>
                                 )}
                             </div>
-
-                            {/* Specs Grid */}
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
-                                <h3 className="font-display font-bold text-xl mb-6 text-asphalt flex items-center">
-                                    <svg className="w-6 h-6 mr-2 text-phare" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    Caractéristiques
-                                </h3>
-                                <div className="grid grid-cols-2 gap-y-5 gap-x-8 text-sm">
-                                    <div className="flex justify-between border-b border-gray-100 pb-2">
-                                        <span className="text-gray-500">Année</span>
-                                        <span className="font-bold text-gray-900">{vehicle.year}</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-gray-100 pb-2">
-                                        <span className="text-gray-500">Kilométrage</span>
-                                        <span className="font-bold text-gray-900">{new Intl.NumberFormat('fr-FR').format(vehicle.mileage)} km</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-gray-100 pb-2">
-                                        <span className="text-gray-500">Carburant</span>
-                                        <span className="font-bold text-gray-900 capitalize">{vehicle.fuel_type}</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-gray-100 pb-2">
-                                        <span className="text-gray-500">Boîte</span>
-                                        <span className="font-bold text-gray-900 capitalize">{vehicle.transmission}</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-gray-100 pb-2">
-                                        <span className="text-gray-500">Carrosserie</span>
-                                        <span className="font-bold text-gray-900 capitalize">{vehicle.body_type}</span>
-                                    </div>
-                                    <div className="flex justify-between border-b border-gray-100 pb-2">
-                                        <span className="text-gray-500">Moteur</span>
-                                        <span className="font-bold text-gray-900">{vehicle.engine_power || '-'}</span>
-                                    </div>
-                                    <div className="flex justify-between pb-2 border-b border-gray-100">
-                                        <span className="text-gray-500">Couleur ext.</span>
-                                        <span className="font-bold text-gray-900 capitalize">{vehicle.exterior_color || '-'}</span>
-                                    </div>
-                                    <div className="flex justify-between pb-2 border-b border-gray-100">
-                                        <span className="text-gray-500">Couleur int.</span>
-                                        <span className="font-bold text-gray-900 capitalize">{vehicle.interior_color || '-'}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Description */}
-                            {vehicle.description && (
-                                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                                    <h3 className="font-display font-bold text-xl mb-4 text-asphalt flex items-center">
-                                        <svg className="w-6 h-6 mr-2 text-phare" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>
-                                        Description du vendeur
-                                    </h3>
-                                    <div className="text-gray-700 whitespace-pre-wrap leading-relaxed text-sm">
-                                        {vehicle.description}
-                                    </div>
-                                </div>
-                            )}
-
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

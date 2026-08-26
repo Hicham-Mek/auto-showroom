@@ -4,13 +4,18 @@ import { getVehicleStatus } from '../Components/Public/vehicleStatus';
 
 export default function VehicleCard({ vehicle }) {
     const status = getVehicleStatus(vehicle.status);
-    const isAvailable = vehicle.status === 'disponible';
+    const isAvailable = vehicle.status === 'disponible' || vehicle.status === 'available';
+
+    const title = vehicle.title ?? `${vehicle.brand ?? ''} ${vehicle.model ?? ''}`.trim();
+    const imagePath = vehicle.image ?? vehicle.primary_image;
+    const imageUrl = imagePath
+        ? (imagePath.startsWith('http') || imagePath.startsWith('/') ? imagePath : `/storage/${imagePath}`)
+        : null;
 
     const specs = [
         { label: 'Année', value: vehicle.year },
-        { label: 'Km', value: vehicle.mileage != null ? `${Number(vehicle.mileage).toLocaleString('fr-FR')}` : null },
-        { label: 'Carburant', value: vehicle.fuel },
-        { label: 'Boîte', value: vehicle.transmission },
+        { label: 'Carburant', value: vehicle.fuel ?? vehicle.fuel_type },
+        { label: 'Boîte', value: vehicle.transmission ? String(vehicle.transmission).slice(0, 4) : null },
     ];
 
     return (
@@ -18,10 +23,16 @@ export default function VehicleCard({ vehicle }) {
         // borders/tonal surfaces to carry hierarchy, not elevation shadows.
         <article className="flex flex-col bg-surface-container-lowest group rounded-lg overflow-hidden border border-outline-variant/40 hover:border-outline transition-colors duration-300">
             <div className="w-full h-56 relative overflow-hidden bg-asphalt">
-                <div
-                    className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 group-hover:opacity-100"
-                    style={{ backgroundImage: vehicle.image ? `url('${vehicle.image}')` : undefined }}
-                />
+                {imageUrl ? (
+                    <div
+                        className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 group-hover:opacity-100"
+                        style={{ backgroundImage: `url('${imageUrl}')` }}
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center text-on-tertiary/40">
+                        <span className="material-symbols-outlined text-[48px]">directions_car</span>
+                    </div>
+                )}
                 <div className="absolute top-4 left-4">
                     <span className="inline-flex items-center px-2 py-1 bg-acier/90 text-on-tertiary font-spec-label text-[10px] uppercase tracking-wider rounded">
                         <span
@@ -40,14 +51,14 @@ export default function VehicleCard({ vehicle }) {
 
             <div className="p-6 flex flex-col gap-4 relative z-10">
                 <h3 className="font-headline-md text-headline-md text-on-surface truncate">
-                    {vehicle.title}
+                    {title}
                 </h3>
 
                 <SpecStrip specs={specs} />
 
                 {isAvailable ? (
                     <Link
-                        href={`/inventaire/${vehicle.id}`}
+                        href={`/vehicules/${vehicle.slug ?? vehicle.id}`}
                         className="w-full py-3 mt-1 bg-transparent border-[1.5px] border-acier text-on-surface font-body-sm font-medium hover:bg-surface-container-highest transition-colors rounded-lg text-center"
                     >
                         Détails
@@ -58,7 +69,7 @@ export default function VehicleCard({ vehicle }) {
                         disabled
                         className="w-full py-3 mt-1 bg-transparent border-[1.5px] border-acier text-on-surface font-body-sm font-medium transition-colors rounded-lg opacity-50 cursor-not-allowed"
                     >
-                        Indisponible
+                        {status.label}
                     </button>
                 )}
             </div>
