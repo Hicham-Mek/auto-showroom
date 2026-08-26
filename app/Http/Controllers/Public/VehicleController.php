@@ -9,12 +9,29 @@ use Inertia\Inertia;
 
 class VehicleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vehicles = Vehicle::with('images')
-            ->defaultListing()
-            ->latest()
-            ->paginate(12)
+        $query = Vehicle::with('images')->defaultListing();
+
+        // Apply Filters
+        if ($request->filled('brand')) $query->where('brand', 'like', '%' . $request->brand . '%');
+        if ($request->filled('min_price')) $query->where('price', '>=', $request->min_price);
+        if ($request->filled('max_price')) $query->where('price', '<=', $request->max_price);
+        if ($request->filled('year')) $query->where('year', '>=', $request->year);
+        if ($request->filled('fuel_type')) $query->where('fuel_type', $request->fuel_type);
+        if ($request->filled('transmission')) $query->where('transmission', $request->transmission);
+
+        // Apply Sorting
+        $sort = $request->input('sort', 'newest');
+        if ($sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $vehicles = $query->paginate(12)->withQueryString()
             ->through(fn ($vehicle) => [
                 'id' => $vehicle->id,
                 'slug' => $vehicle->slug,
@@ -31,8 +48,9 @@ class VehicleController extends Controller
                                 ?? $vehicle->images->first()?->path,
             ]);
 
-        return Inertia::render('Public/Vehicles/Vehicles', [
-            'vehicles' => $vehicles
+        return Inertia::render('Public/Vehicles/Vehicules', [
+            'vehicles' => $vehicles,
+            'filters' => $request->only(['brand', 'min_price', 'max_price', 'year', 'fuel_type', 'transmission', 'sort']),
         ]);
     }
 
