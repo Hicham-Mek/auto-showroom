@@ -1,79 +1,95 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
-import PageHeader from '../../Components/Public/PageHeader';
-import SectionHeader from '../../Components/Public/Sectionheader';
-import WhyChooseUs from '../../Components/Public/Whychooseus';
+import AboutHero from '../About/AboutHero';
+import ContactInformation from '../About/ContactInformation';
+import BusinessHours from '../About/BusinessHours';
+import LocationSection from '../About/LocationSection';
+import SocialLinks from '../About/SocialLinks';
 
-export default function About({ dealership }) {
-    const whatsappNumber = dealership?.whatsapp ?? '';
-    const phoneNumber = dealership?.phone ?? '';
+export default function About({ dealership: propDealership }) {
+    const { dealership: pageDealership } = usePage().props;
+    const dealership = propDealership || pageDealership || {};
+
+    const {
+        name,
+        logo_path: logoPath,
+        phone,
+        whatsapp,
+        email,
+        address,
+        hours,
+        latitude,
+        longitude,
+    } = dealership;
+
+    const facebookUrl = dealership.facebook_url || dealership.facebook;
+    const instagramUrl = dealership.instagram_url || dealership.instagram;
+    const tiktokUrl = dealership.tiktok_url || dealership.tiktok;
+
+    const hasContactCta = Boolean(whatsapp || phone);
 
     return (
         <PublicLayout>
             <Head title="À propos" />
 
-            <PageHeader
-                eyebrow="À propos"
-                title={dealership?.name ?? 'Notre concession'}
-                subtitle="Une équipe locale, un stock choisi avec soin, des prix qui se discutent."
-            />
+            <div className="flex flex-col w-full">
+                <AboutHero name={name} logoPath={logoPath} />
 
-            <section className="w-full bg-beton py-xl lg:py-24">
-                <div className="max-w-3xl mx-auto px-margin-mobile lg:px-lg flex flex-col gap-6">
-                    <SectionHeader eyebrow="Notre histoire" title="Qui sommes-nous" />
-                    <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                        {dealership?.about ??
-                            "Nous sommes un concessionnaire automobile basé en Algérie. Chaque véhicule proposé est inspecté avant sa mise en vente, et les prix affichés se discutent directement avec nous — par téléphone ou WhatsApp, sans étape intermédiaire."}
-                    </p>
-                </div>
-            </section>
+                <section className="w-full bg-surface px-margin-mobile lg:px-lg py-xl relative z-20">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-lg lg:gap-xl">
+                            <LocationSection address={address} latitude={latitude} longitude={longitude} />
 
-            <WhyChooseUs />
+                            <div className="lg:col-span-5 flex flex-col gap-lg bg-surface-container-lowest rounded-xl shadow-xl p-md lg:p-lg">
+                                <div>
+                                    <h2 className="font-headline-lg text-headline-lg text-on-surface mb-6 flex items-center gap-2 tracking-wide">
+                                        <span className="material-symbols-outlined text-primary" aria-hidden="true">
+                                            contacts
+                                        </span>
+                                        Contact &amp; Infos
+                                    </h2>
 
-            <section className="w-full bg-beton py-xl lg:py-24">
-                <div className="max-w-3xl mx-auto px-margin-mobile lg:px-lg flex flex-col gap-6">
-                    <SectionHeader eyebrow="Nous contacter" title="Discutons de votre véhicule" />
+                                    <div className="space-y-6">
+                                        <ContactInformation address={address} phone={phone} email={email} />
+                                        <BusinessHours hours={hours} />
+                                    </div>
+                                </div>
 
-                    <div className="border border-outline-variant/60 rounded-lg p-6 flex flex-col gap-3">
-                        {dealership?.address && (
-                            <p className="font-body-md text-body-md text-on-surface">{dealership.address}</p>
-                        )}
-                        {phoneNumber && (
-                            <p className="font-spec-value text-spec-value text-on-surface-variant">{phoneNumber}</p>
-                        )}
-                        {dealership?.email && (
-                            <p className="font-body-sm text-body-sm text-on-surface-variant">{dealership.email}</p>
-                        )}
+                                {hasContactCta && (
+                                    <div className="mt-auto pt-8 border-t border-surface-variant flex flex-col sm:flex-row gap-4">
+                                        {whatsapp && (
+                                            <a
+                                                className="flex-1 bg-primary text-asphalt font-headline-md text-headline-md py-4 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-dim transition-colors shadow-md"
+                                                href={`https://wa.me/${whatsapp}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                <span className="material-symbols-outlined" aria-hidden="true">
+                                                    chat
+                                                </span>
+                                                WhatsApp
+                                            </a>
+                                        )}
+                                        {phone && (
+                                            <a
+                                                className="flex-1 bg-transparent text-on-surface border-2 border-acier font-body-md font-medium py-4 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors"
+                                                href={`tel:${phone}`}
+                                            >
+                                                <span className="material-symbols-outlined" aria-hidden="true">
+                                                    call
+                                                </span>
+                                                Appeler
+                                            </a>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
+                </section>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        {whatsappNumber && (
-                            <a
-                                href={`https://wa.me/${whatsappNumber}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-phare text-asphalt font-headline-md text-base font-bold uppercase tracking-wide rounded-lg hover:bg-primary-fixed-dim transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-xl" aria-hidden="true">
-                                    chat
-                                </span>
-                                WhatsApp
-                            </a>
-                        )}
-                        {phoneNumber && (
-                            <a
-                                href={`tel:${phoneNumber}`}
-                                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-transparent border-2 border-acier text-on-surface font-body-md text-base font-medium rounded-lg hover:bg-surface-container-highest transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-xl" aria-hidden="true">
-                                    call
-                                </span>
-                                Appeler
-                            </a>
-                        )}
-                    </div>
-                </div>
-            </section>
+                <SocialLinks facebookUrl={facebookUrl} instagramUrl={instagramUrl} tiktokUrl={tiktokUrl} />
+            </div>
         </PublicLayout>
     );
 }
