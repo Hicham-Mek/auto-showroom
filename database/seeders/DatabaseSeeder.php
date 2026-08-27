@@ -19,21 +19,24 @@ class DatabaseSeeder extends Seeder
             'hours' => "Sam-Jeu : 8h30-17h30\nVen : Fermé",
         ]);
 
-        Vehicle::factory()
-            ->count(10)
-            ->create()
-            ->each(function (Vehicle $vehicle) {
-                $imageCount = fake()->numberBetween(3, 6);
+        // Faux véhicules uniquement pour l'environnement de développement local
+        if (app()->isLocal()) {
+            Vehicle::factory()
+                ->count(10)
+                ->create()
+                ->each(function (Vehicle $vehicle) {
+                    $imageCount = fake()->numberBetween(3, 6);
 
-                VehicleImage::factory()
-                    ->count($imageCount)
-                    ->create(['vehicle_id' => $vehicle->id])
-                    ->each(function (VehicleImage $image, int $index) {
-                        $image->update([
-                            'sort_order' => $index,
-                            'is_primary' => $index === 0,
-                        ]);
-                    });
-            });
+                    VehicleImage::factory()
+                        ->count($imageCount)
+                        ->create(['vehicle_id' => $vehicle->id])
+                        ->each(function (VehicleImage $image, int $index) {
+                            $image->update([
+                                'sort_order' => $index,
+                                'is_primary' => $index === 0,
+                            ]);
+                        });
+                });
+        }
     }
 }
