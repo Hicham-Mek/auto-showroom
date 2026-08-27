@@ -29,7 +29,10 @@ export default function Index({ dealership: propDealership }) {
 
   return (
     <PublicLayout>
-      <Head title="À propos" />
+      <Head>
+        <title>À propos</title>
+        <meta name="description" content={`Découvrez l'histoire, les horaires et les coordonnées de ${name || 'notre showroom'}. Contactez-nous pour toute information.`} />
+      </Head>
 
       <div className="flex flex-col w-full">
         <AboutHero name={name} logoPath={logoPath} />

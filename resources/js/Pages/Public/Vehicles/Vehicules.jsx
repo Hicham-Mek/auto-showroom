@@ -18,7 +18,10 @@ export default function Vehicules({ vehicles, filters }) {
 
     return (
         <PublicLayout>
-            <Head title="Inventaire" />
+            <Head>
+                <title>Inventaire</title>
+                <meta name="description" content="Explorez notre inventaire complet de véhicules d'occasion. Utilisez nos filtres pour trouver la voiture qui correspond à vos besoins et à votre budget." />
+            </Head>
 
             {/* Header Section */}
             <div className="bg-asphalt text-white py-12">

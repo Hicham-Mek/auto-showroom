@@ -79,7 +79,10 @@ export default function VehicleDetails({ vehicle, dealership }) {
 
     return (
         <PublicLayout>
-            <Head title={`${vehicle.brand} ${vehicle.model} - ${dealership?.name || 'Showroom'}`} />
+            <Head>
+                <title>{`${vehicle.brand} ${vehicle.model} - ${dealership?.name || 'Showroom'}`}</title>
+                <meta name="description" content={`Découvrez cette magnifique ${vehicle.brand} ${vehicle.model} à ${formatPrice(vehicle.price)}. Véhicule d'occasion disponible chez ${dealership?.name || 'Showroom'}.`} />
+            </Head>
 
             <main className="w-full pb-32">
                 {/* 1. TOP PREMIUM SPOTLIGHT HERO (Full-Bleed Cover Image) */}

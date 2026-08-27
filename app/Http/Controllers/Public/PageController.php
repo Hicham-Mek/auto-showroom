@@ -12,4 +12,12 @@ class PageController extends Controller
     {
         return Inertia::render('Public/About');
     }
+
+    public function sitemap()
+    {
+        $vehicles = \App\Models\Vehicle::notHidden()->latest()->get();
+        return response()->view('sitemap', [
+            'vehicles' => $vehicles
+        ])->header('Content-Type', 'text/xml');
+    }
 }

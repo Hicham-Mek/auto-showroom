@@ -12,7 +12,10 @@ export default function Home({ dealership, vehicles = [], featuredVehicles, stat
 
     return (
         <PublicLayout>
-            <Head title="Accueil" />
+            <Head>
+                <title>Accueil</title>
+                <meta name="description" content="Découvrez notre sélection de véhicules d'occasion inspectés et garantis. Trouvez la voiture parfaite chez AutoShowroom." />
+            </Head>
 
             <HeroSection dealership={dealership} makes={makes} filters={filters} />
             <FeaturedVehicles vehicles={vehiclesToShow} />
