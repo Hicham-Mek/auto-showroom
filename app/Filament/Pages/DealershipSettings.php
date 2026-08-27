@@ -27,7 +27,8 @@ class DealershipSettings extends Page implements HasForms
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     protected string $view = 'filament.pages.dealership-settings';
-
+    
+    public ?array $data = []; 
     public function mount(): void
     {
         $settings = DealershipSetting::current();
@@ -44,7 +45,7 @@ class DealershipSettings extends Page implements HasForms
                         ->required(),
                     FileUpload::make('logo_path')
                         ->label('Logo')
-                        ->image()
+                        ->disk('public')
                         ->directory('settings'),
                     Textarea::make('hours')
                         ->label('Horaires d\'ouverture')
