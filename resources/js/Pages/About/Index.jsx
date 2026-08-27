@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 import AboutHero from './AboutHero';
 import ContactInformation from './ContactInformation';
@@ -6,12 +6,14 @@ import BusinessHours from './BusinessHours';
 import LocationSection from './LocationSection';
 import SocialLinks from './SocialLinks';
 
-export default function Index({ dealership = {} }) {
+export default function Index({ dealership: propDealership }) {
+  const { dealership: pageDealership } = usePage().props;
+  const dealership = propDealership || pageDealership || {};
+
   const {
     name,
     logo_path: logoPath,
     phone,
-    whatsapp,
     email,
     address,
     hours,
@@ -22,7 +24,8 @@ export default function Index({ dealership = {} }) {
     tiktok_url: tiktokUrl,
   } = dealership;
 
-  const hasContactCta = Boolean(whatsapp || phone);
+  const cleanWhatsapp = dealership?.whatsapp ? dealership.whatsapp.replace(/[^0-9]/g, '') : '';
+  const hasContactCta = Boolean(cleanWhatsapp || phone);
 
   return (
     <PublicLayout>
@@ -53,10 +56,10 @@ export default function Index({ dealership = {} }) {
 
                 {hasContactCta && (
                   <div className="mt-auto pt-8 border-t border-surface-variant flex flex-col sm:flex-row gap-4">
-                    {whatsapp && (
+                    {cleanWhatsapp && (
                       <a
                         className="flex-1 bg-primary text-asphalt font-headline-md text-headline-md py-4 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-dim transition-colors shadow-md"
-                        href={`https://wa.me/${whatsapp}`}
+                        href={`https://wa.me/${cleanWhatsapp}`}
                         target="_blank"
                         rel="noreferrer"
                       >

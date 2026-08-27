@@ -26,7 +26,8 @@ export default function About({ dealership: propDealership }) {
     const instagramUrl = dealership.instagram_url || dealership.instagram;
     const tiktokUrl = dealership.tiktok_url || dealership.tiktok;
 
-    const hasContactCta = Boolean(whatsapp || phone);
+    const cleanWhatsapp = dealership?.whatsapp ? dealership.whatsapp.replace(/[^0-9]/g, '') : '';
+    const hasContactCta = Boolean(cleanWhatsapp || phone);
 
     return (
         <PublicLayout>
@@ -57,10 +58,10 @@ export default function About({ dealership: propDealership }) {
 
                                 {hasContactCta && (
                                     <div className="mt-auto pt-8 border-t border-surface-variant flex flex-col sm:flex-row gap-4">
-                                        {whatsapp && (
+                                        {cleanWhatsapp && (
                                             <a
                                                 className="flex-1 bg-primary text-asphalt font-headline-md text-headline-md py-4 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-dim transition-colors shadow-md"
-                                                href={`https://wa.me/${whatsapp}`}
+                                                href={`https://wa.me/${cleanWhatsapp}`}
                                                 target="_blank"
                                                 rel="noreferrer"
                                             >

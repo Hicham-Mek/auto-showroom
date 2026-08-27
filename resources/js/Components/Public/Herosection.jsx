@@ -6,8 +6,18 @@ export default function HeroSection({ dealership, makes = [], filters = {} }) {
     return (
         <section className="w-full h-[90vh] relative bg-asphalt -mt-16 pt-24 pb-16 md:pt-32 md:pb-20 bg-grid-line">
             <div className="relative z-10 w-full max-w-7xl mx-auto px-margin-mobile lg:px-lg flex flex-col items-center text-center">
+                {dealership?.logo_path && (
+                    <div className="bg-surface-container-lowest/10 p-3 rounded-xl backdrop-blur-md mb-6 border border-white/10 shadow-lg">
+                        <img
+                            src={dealership.logo_path.startsWith('http') || dealership.logo_path.startsWith('/') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
+                            alt={dealership?.name || 'Logo'}
+                            className="h-16 md:h-24 w-auto object-contain"
+                        />
+                    </div>
+                )}
+
                 <span className="font-spec-label text-spec-label text-tertiary-fixed-dim uppercase tracking-widest mb-4">
-                    Concessionnaire automobile — Algérie
+                    {dealership?.name ? `${dealership.name} — Concessionnaire Automobile` : 'Concessionnaire automobile — Algérie'}
                 </span>
 
                 <h1 className="font-headline-xl text-[40px] md:text-[64px] lg:text-[80px] text-on-tertiary tracking-tight leading-[1.02] uppercase mb-6">

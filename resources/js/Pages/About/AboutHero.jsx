@@ -5,30 +5,23 @@
  *   SVG background-image (no inline styles allowed here)
  * - shows a fallback badge when `logoPath` is null, instead of a broken image
  */
-export default function AboutHero({ name, logoPath }) {
-  const dealershipName = name || 'Notre Concession';
+export default function AboutHero({ dealership, name, logoPath }) {
+  const dealershipName = dealership?.name || name || 'Notre Showroom';
+  const logo = dealership?.logo_path || logoPath;
 
   return (
     <section className="w-full bg-asphalt text-on-tertiary px-margin-mobile lg:px-lg py-xl flex flex-col items-center justify-center text-center relative overflow-hidden -mt-16 pt-32 pb-24 shadow-md bg-grid-line">
       <div className="relative flex flex-col items-center">
         <div className="bg-surface-container-lowest p-md rounded-xl shadow-lg mb-8">
-          {logoPath ? (
-            <img
-              alt={`Logo ${dealershipName}`}
-              className="h-24 w-24 md:h-32 md:w-32 object-contain"
-              src={logoPath.startsWith('http') || logoPath.startsWith('/') ? logoPath : `/storage/${logoPath}`}
-            />
-          ) : (
-            <div
-              className="h-24 w-24 md:h-32 md:w-32 flex items-center justify-center"
-              role="img"
-              aria-label={`Logo ${dealershipName}`}
-            >
-              <span className="material-symbols-outlined text-primary text-5xl" aria-hidden="true">
-                directions_car
-              </span>
-            </div>
-          )}
+          <img
+            alt={dealership?.name || dealershipName}
+            className="h-24 w-24 md:h-32 md:w-32 object-contain"
+            src={logo ? (logo.startsWith('http') || logo.startsWith('/') ? logo : `/storage/${logo}`) : '/images/default-logo.png'}
+            onError={(e) => {
+              // If default image fails to load, gracefully fallback to styling
+              e.target.src = '/images/default-logo.png';
+            }}
+          />
         </div>
 
         <h1 className="font-headline-xl text-headline-xl md:text-5xl lg:text-6xl text-on-tertiary mb-xs tracking-tighter uppercase">

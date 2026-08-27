@@ -14,7 +14,8 @@ export default function PublicLayout({ children }) {
     const currentPath = usePage().url;
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const whatsappNumber = dealership?.whatsapp ?? '';
+    const rawWhatsApp = dealership?.whatsapp ? dealership.whatsapp.replace(/[^0-9]/g, '') : '';
+    const whatsappNumber = rawWhatsApp.startsWith('0') && rawWhatsApp.length === 10 ? `213${rawWhatsApp.slice(1)}` : rawWhatsApp;
     const phoneNumber = dealership?.phone ?? '';
 
     return (
@@ -22,19 +23,20 @@ export default function PublicLayout({ children }) {
             <header className="fixed top-0 w-full z-50 bg-beton border-b border-outline-variant">
                 <div className="h-16 w-full px-margin-mobile lg:px-lg flex items-center justify-between mx-auto">
                     <Link href="/" className="flex items-center gap-2.5">
-                        {dealership?.logo_path ? (
-                            <img
-                                src={dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
-                                alt={dealership.name || 'AutoShowroom'}
-                                className="h-8 w-auto object-contain"
-                            />
-                        ) : (
-                            <div className="w-8 h-8 rounded-lg bg-asphalt flex items-center justify-center text-phare shadow-sm">
-                                <span className="material-symbols-outlined text-[20px]">directions_car</span>
-                            </div>
-                        )}
+                        <img
+                            src={dealership?.logo_path ? (dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`) : '/images/default-logo.png'}
+                            alt={dealership?.name || 'Notre Showroom'}
+                            className="h-8 w-auto object-contain"
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                            }}
+                        />
+                        <div className="hidden w-8 h-8 rounded-lg bg-asphalt items-center justify-center text-phare shadow-sm">
+                            <span className="material-symbols-outlined text-[20px]">directions_car</span>
+                        </div>
                         <span className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
-                            {dealership?.name || 'AutoShowroom'}
+                            {dealership?.name || 'Notre Showroom'}
                         </span>
                     </Link>
 
@@ -102,19 +104,14 @@ export default function PublicLayout({ children }) {
                 <div className="w-full px-margin-mobile lg:px-lg mx-auto flex flex-col md:flex-row justify-between gap-xl">
                     <div className="w-full md:w-2/3">
                         <div className="flex items-center gap-2.5 mb-md">
-                            {dealership?.logo_path ? (
-                                <img
-                                    src={dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
-                                    alt={dealership.name || 'AutoShowroom'}
-                                    className="h-6 w-auto object-contain brightness-0 invert"
-                                />
-                            ) : (
-                                <div className="w-7 h-7 rounded-lg bg-phare/20 border border-phare/40 flex items-center justify-center text-phare">
-                                    <span className="material-symbols-outlined text-[18px]">directions_car</span>
-                                </div>
-                            )}
+                            <img
+                                src={dealership?.logo_path ? (dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`) : '/images/default-logo.png'}
+                                alt={dealership?.name || 'Notre Showroom'}
+                                className="h-6 w-auto object-contain brightness-0 invert"
+                                onError={(e) => { e.target.style.display = 'none'; }}
+                            />
                             <span className="font-headline-md text-headline-md text-white">
-                                {dealership?.name || 'AutoShowroom'}
+                                {dealership?.name || 'Notre Showroom'}
                             </span>
                         </div>
                         <p className="font-body-sm text-body-sm text-tertiary-fixed-dim">
@@ -164,14 +161,16 @@ export default function PublicLayout({ children }) {
                         <span className="font-spec-label text-spec-label text-on-tertiary/60 uppercase">
                             Assistance Directe
                         </span>
-                        <a
-                            className="flex items-center gap-sm bg-[#835400] px-lg py-sm rounded-lg hover:bg-[#664000] transition-all text-on-primary font-headline-md text-headline-md"
-                            href={`https://wa.me/${whatsappNumber}`}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <span className="material-symbols-outlined">chat</span> WhatsApp
-                        </a>
+                        {whatsappNumber ? (
+                            <a
+                                className="flex items-center gap-sm bg-[#835400] px-lg py-sm rounded-lg hover:bg-[#664000] transition-all text-on-primary font-headline-md text-headline-md"
+                                href={`https://wa.me/${whatsappNumber}`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <span className="material-symbols-outlined">chat</span> WhatsApp
+                            </a>
+                        ) : null}
                     </div>
                 </div>
 

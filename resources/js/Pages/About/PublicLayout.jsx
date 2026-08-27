@@ -15,7 +15,8 @@ export default function PublicLayout({ children }) {
   const currentPath = usePage().url;
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const whatsappNumber = dealership?.whatsapp ?? '';
+  const rawWhatsApp = dealership?.whatsapp ? dealership.whatsapp.replace(/[^0-9]/g, '') : '';
+  const whatsappNumber = rawWhatsApp.startsWith('0') && rawWhatsApp.length === 10 ? `213${rawWhatsApp.slice(1)}` : rawWhatsApp;
   const phoneNumber = dealership?.phone ?? '';
 
   return (
@@ -27,7 +28,7 @@ export default function PublicLayout({ children }) {
               <img
                 alt={`Logo ${dealership?.name ?? 'AutoShowroom'}`}
                 className="h-8 w-auto object-contain"
-                src={dealership.logo_path}
+                src={dealership.logo_path.startsWith('http') || dealership.logo_path.startsWith('/') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
               />
             ) : (
               <span className="material-symbols-outlined text-primary text-2xl" aria-hidden="true">
@@ -109,7 +110,7 @@ export default function PublicLayout({ children }) {
                 <img
                   alt={`Logo ${dealership?.name ?? 'AutoShowroom'}`}
                   className="h-6 w-auto object-contain brightness-0 invert"
-                  src={dealership.logo_path}
+                  src={dealership.logo_path.startsWith('http') || dealership.logo_path.startsWith('/') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
                 />
               ) : (
                 <span className="material-symbols-outlined text-primary text-xl" aria-hidden="true">
