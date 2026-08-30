@@ -125,8 +125,9 @@ class VehicleForm
                                     FileUpload::make('path')
                                         ->label('Image')
                                         ->image()
-                                        ->disk('public')
-                                        ->directory('vehicle-images')
+                                        ->disk('s3')
+                                        ->directory('vehicles')
+                                        ->visibility('public')
                                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                         ->maxSize(4096) // 4 MB
                                         ->imageResizeMode('cover')

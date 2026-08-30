@@ -45,8 +45,9 @@ class DealershipSettings extends Page implements HasForms
                         ->required(),
                     FileUpload::make('logo_path')
                         ->label('Logo')
-                        ->disk('public')
+                        ->disk('s3')
                         ->directory('settings')
+                        ->visibility('public')
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']),
                     Textarea::make('hours')

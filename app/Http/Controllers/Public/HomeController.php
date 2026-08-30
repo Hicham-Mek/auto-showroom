@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -31,7 +32,10 @@ class HomeController extends Controller
                 'negotiable' => $vehicle->negotiable,
                 'status' => $vehicle->status->value ?? (string) $vehicle->status,
                 'image' => ($img = $vehicle->images->where('is_primary', true)->first()?->path ?? $vehicle->images->first()?->path)
-                    ? (str_starts_with($img, 'http') ? $img : "/storage/{$img}")
+                    ? (str_starts_with($img, 'http') ? $img : Storage::disk('s3')->url($img))
+                    : null,
+                'primary_image' => ($img = $vehicle->images->where('is_primary', true)->first()?->path ?? $vehicle->images->first()?->path)
+                    ? (str_starts_with($img, 'http') ? $img : Storage::disk('s3')->url($img))
                     : null,
             ]);
 

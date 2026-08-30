@@ -37,7 +37,11 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'dealership' => \App\Models\DealershipSetting::current(),
+            'dealership' => tap(\App\Models\DealershipSetting::current(), function ($setting) {
+                if ($setting->logo_path && !str_starts_with($setting->logo_path, 'http')) {
+                    $setting->logo_path = \Illuminate\Support\Facades\Storage::disk('s3')->url($setting->logo_path);
+                }
+            }),
         ];
     }
 }

@@ -44,8 +44,9 @@ class VehicleController extends Controller
                 'price' => $vehicle->price,
                 'negotiable' => $vehicle->negotiable,
                 'status' => $vehicle->status,
-                'primary_image' => $vehicle->images->where('is_primary', true)->first()?->path 
-                                ?? $vehicle->images->first()?->path,
+                'primary_image' => ($path = $vehicle->images->where('is_primary', true)->first()?->path ?? $vehicle->images->first()?->path)
+                                ? (str_starts_with($path, 'http') ? $path : \Illuminate\Support\Facades\Storage::disk('s3')->url($path))
+                                : null,
             ]);
 
         return Inertia::render('Public/Vehicles/Vehicules', [
@@ -61,6 +62,13 @@ class VehicleController extends Controller
         }
 
         $vehicle->load('images');
+
+        $vehicle->images->transform(function ($image) {
+            if ($image->path && !str_starts_with($image->path, 'http')) {
+                $image->path = \Illuminate\Support\Facades\Storage::disk('s3')->url($image->path);
+            }
+            return $image;
+        });
 
         return Inertia::render('Public/Vehicles/VehichleDetails', [
             'vehicle' => $vehicle

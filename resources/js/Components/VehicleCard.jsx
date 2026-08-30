@@ -8,9 +8,7 @@ export default function VehicleCard({ vehicle }) {
 
     const title = vehicle.title ?? `${vehicle.brand ?? ''} ${vehicle.model ?? ''}`.trim();
     const imagePath = vehicle.image ?? vehicle.primary_image;
-    const imageUrl = imagePath
-        ? (imagePath.startsWith('http') || imagePath.startsWith('/') ? imagePath : `/storage/${imagePath}`)
-        : null;
+    const imageUrl = imagePath || null;
 
     const specs = [
         { label: 'Année', value: vehicle.year },

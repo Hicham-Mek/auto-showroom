@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Panel;
+use Filament\Models\Contracts\FilamentUser; // Make sure this is at the top!
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -32,6 +34,8 @@ class User extends Authenticatable
     }
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // every row in `users` is trusted — there's no self sign-up, no roles, one admin
+        // For our MVP, there is no public registration, 
+        // so anyone who exists in the database is the admin!
+        return true; 
     }
 }

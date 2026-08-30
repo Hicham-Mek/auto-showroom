@@ -26,8 +26,8 @@ export default function VehicleDetails({ vehicle, dealership }) {
 
     // Safely extract images
     const images = vehicle?.images?.length > 0
-        ? vehicle.images.map(img => img.path.startsWith('http') || img.path.startsWith('/') ? img.path : `/storage/${img.path}`)
-        : vehicle?.image ? [vehicle.image.startsWith('http') || vehicle.image.startsWith('/') ? vehicle.image : `/storage/${vehicle.image}`]
+        ? vehicle.images.map(img => img.path)
+        : vehicle?.image ? [vehicle.image]
         : ['/placeholder-car.jpg'];
 
     const totalSlides = images.length;
@@ -375,7 +375,7 @@ export default function VehicleDetails({ vehicle, dealership }) {
                                 <div className="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center p-1.5 border border-outline-variant/30">
                                     {dealership?.logo_path ? (
                                         <img
-                                            src={dealership.logo_path.startsWith('http') || dealership.logo_path.startsWith('/') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
+                                            src={dealership.logo_path}
                                             alt={dealership?.name || 'Logo'}
                                             className="w-full h-full object-contain mix-blend-multiply"
                                         />

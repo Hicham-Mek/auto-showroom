@@ -9,7 +9,7 @@ export default function HeroSection({ dealership, makes = [], filters = {} }) {
                 {dealership?.logo_path && (
                     <div className="bg-surface-container-lowest/10 p-3 rounded-xl backdrop-blur-md mb-6 border border-white/10 shadow-lg">
                         <img
-                            src={dealership.logo_path.startsWith('http') || dealership.logo_path.startsWith('/') ? dealership.logo_path : `/storage/${dealership.logo_path}`}
+                            src={dealership.logo_path}
                             alt={dealership?.name || 'Logo'}
                             className="h-16 md:h-24 w-auto object-contain"
                         />

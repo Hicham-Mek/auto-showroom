@@ -24,7 +24,7 @@ export default function PublicLayout({ children }) {
                 <div className="h-16 w-full px-margin-mobile lg:px-lg flex items-center justify-between mx-auto">
                     <Link href="/" className="flex items-center gap-2.5">
                         <img
-                            src={dealership?.logo_path ? (dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`) : '/images/default-logo.png'}
+                            src={dealership?.logo_path ? dealership.logo_path : '/images/default-logo.png'}
                             alt={dealership?.name || 'Notre Showroom'}
                             className="h-8 w-auto object-contain"
                             onError={(e) => {
@@ -105,7 +105,7 @@ export default function PublicLayout({ children }) {
                     <div className="w-full md:w-2/3">
                         <div className="flex items-center gap-2.5 mb-md">
                             <img
-                                src={dealership?.logo_path ? (dealership.logo_path.startsWith('http') ? dealership.logo_path : `/storage/${dealership.logo_path}`) : '/images/default-logo.png'}
+                                src={dealership?.logo_path ? dealership.logo_path : '/images/default-logo.png'}
                                 alt={dealership?.name || 'Notre Showroom'}
                                 className="h-6 w-auto object-contain brightness-0 invert"
                                 onError={(e) => { e.target.style.display = 'none'; }}

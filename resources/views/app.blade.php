@@ -24,9 +24,12 @@
             if ($vehicle) {
                 $ogTitle = "{$vehicle->brand} {$vehicle->model} - " . number_format($vehicle->price, 0, ',', ' ') . " DZD";
                 $ogDescription = \Illuminate\Support\Str::limit($vehicle->description ?? "Découvrez cette magnifique {$vehicle->brand} {$vehicle->model} chez AutoShowroom.", 150);
-                $primaryImage = $vehicle->primaryImage;
-                if ($primaryImage) {
-                    $ogImage = asset('storage/' . $primaryImage->image_path);
+                $primaryImage = $vehicle->primaryImage ?? $vehicle->images()->first();
+                if ($primaryImage && $primaryImage->path) {
+                    $imgPath = $primaryImage->path;
+                    $ogImage = str_starts_with($imgPath, 'http')
+                        ? $imgPath
+                        : \Illuminate\Support\Facades\Storage::disk('s3')->url($imgPath);
                 }
                 $ogType = 'article';
             }

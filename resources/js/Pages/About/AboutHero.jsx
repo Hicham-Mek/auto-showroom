@@ -16,7 +16,7 @@ export default function AboutHero({ dealership, name, logoPath }) {
           <img
             alt={dealership?.name || dealershipName}
             className="h-24 w-24 md:h-32 md:w-32 object-contain"
-            src={logo ? (logo.startsWith('http') || logo.startsWith('/') ? logo : `/storage/${logo}`) : '/images/default-logo.png'}
+            src={logo ? logo : '/images/default-logo.png'}
             onError={(e) => {
               // If default image fails to load, gracefully fallback to styling
               e.target.src = '/images/default-logo.png';
