@@ -23,9 +23,9 @@ RUN composer dump-autoload --optimize --no-dev --no-scripts
 # ==============================================================================
 FROM php:8.4-apache
 
-# Install required system libraries and PHP extensions (including intl & gd for Filament)
-# Removed -j$(nproc) to prevent parallel compilation crashes
+# Install required system libraries and SSL Certificates!
 RUN apt-get update && apt-get install -y \
+    ca-certificates \
     libzip-dev \
     zip \
     libicu-dev \
@@ -58,12 +58,8 @@ COPY . /var/www/html
 COPY --from=vendor-build /app/vendor /var/www/html/vendor
 COPY --from=node-build /app/public/build /var/www/html/public/build
 
-# Set permissions for storage & cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Create safe start script using printf
-RUN printf '#!/bin/bash\nset -e\nphp artisan package:discover --ansi || true\nphp artisan filament:upgrade || true\nphp artisan migrate --force || true\nphp artisan config:cache || true\nphp artisan route:cache || true\nphp artisan view:cache || true\nexec apache2-foreground\n' > /start.sh \
+# Create safe start script using printf (Fixes permissions right before Apache starts!)
+RUN printf '#!/bin/bash\nset -e\nphp artisan package:discover --ansi || true\nphp artisan filament:upgrade || true\nphp artisan migrate --force || true\nphp artisan config:cache || true\nphp artisan route:cache || true\nphp artisan view:cache || true\nchmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache\nexec apache2-foreground\n' > /start.sh \
     && chmod +x /start.sh
 
 EXPOSE 80
