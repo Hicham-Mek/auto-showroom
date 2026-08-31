@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,10 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables[] = 'TEMP';
             \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables[] = 'TMPDIR';
         }
+        // Force HTTPS in production so Vite CSS/JS loads correctly on Render
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }
+
