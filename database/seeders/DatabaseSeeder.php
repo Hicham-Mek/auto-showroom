@@ -3,14 +3,25 @@
 namespace Database\Seeders;
 
 use App\Models\DealershipSetting;
+use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\VehicleImage;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Admin User for Filament Panel
+        User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('TDIHDI26'),
+            ]
+        );
+
         DealershipSetting::current()->update([
             'name' => 'AutoShowroom Tlemcen',
             'phone' => '+213 555 00 00 00',
