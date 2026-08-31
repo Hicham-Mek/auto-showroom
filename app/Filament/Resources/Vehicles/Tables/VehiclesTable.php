@@ -23,7 +23,7 @@ class VehiclesTable
             ->columns([
                 ImageColumn::make('primaryImage.path')
     ->label('')
-    ->disk('public')
+    ->disk('s3')
     ->visibility('public')
     ->size(60)
     ->square(),
