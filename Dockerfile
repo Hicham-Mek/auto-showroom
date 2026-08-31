@@ -19,10 +19,9 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # ==============================================================================
-# 3. Final Production Server (PHP 8.3 + Apache)
+# 3. Final Production Server (PHP 8.5 + Apache)
 # ==============================================================================
-FROM php:8.3-apache
-
+FROM php:8.5-apache
 # Install required system libraries and PHP extensions (including intl & gd for Filament)
 RUN apt-get update && apt-get install -y \
     libzip-dev \
