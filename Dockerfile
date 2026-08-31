@@ -19,10 +19,12 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # ==============================================================================
-# 3. Final Production Server (PHP 8.5 + Apache)
+# 3. Final Production Server (PHP 8.4 + Apache)
 # ==============================================================================
-FROM php:8.5-apache
+FROM php:8.4-apache
+
 # Install required system libraries and PHP extensions (including intl & gd for Filament)
+# Removed -j$(nproc) to prevent parallel compilation crashes
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
@@ -32,7 +34,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libwebp-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) \
+    && docker-php-ext-install \
         pdo_mysql \
         zip \
         intl \
