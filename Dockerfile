@@ -14,9 +14,9 @@ RUN npm run build
 FROM composer:2 AS vendor-build
 WORKDIR /app
 COPY composer*.json ./
-RUN composer install --no-dev --no-interaction --prefer-dist --ignore-platform-reqs --optimize-autoloader
+RUN composer install --no-dev --no-interaction --prefer-dist --ignore-platform-reqs --no-scripts --no-autoloader
 COPY . .
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # ==============================================================================
 # 3. Final Production Server (PHP 8.3 + Apache)
@@ -62,7 +62,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Create safe start script using printf
-RUN printf '#!/bin/bash\nset -e\nphp artisan migrate --force || true\nphp artisan config:cache || true\nphp artisan route:cache || true\nphp artisan view:cache || true\nexec apache2-foreground\n' > /start.sh \
+RUN printf '#!/bin/bash\nset -e\nphp artisan package:discover --ansi || true\nphp artisan filament:upgrade || true\nphp artisan migrate --force || true\nphp artisan config:cache || true\nphp artisan route:cache || true\nphp artisan view:cache || true\nexec apache2-foreground\n' > /start.sh \
     && chmod +x /start.sh
 
 EXPOSE 80
