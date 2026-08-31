@@ -1,10 +1,10 @@
 import { Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
-import AboutHero from '../About/AboutHero';
-import ContactInformation from '../About/ContactInformation';
-import BusinessHours from '../About/BusinessHours';
-import LocationSection from '../About/LocationSection';
-import SocialLinks from '../About/SocialLinks';
+import AboutHero from '../../Components/About/AboutHero';
+import ContactInformation from '../../Components/About/ContactInformation';
+import BusinessHours from '../../Components/About/BusinessHours';
+import LocationSection from '../../Components/About/LocationSection';
+import SocialLinks from '../../Components/About/SocialLinks';
 
 export default function About({ dealership: propDealership }) {
     const { dealership: pageDealership } = usePage().props;
@@ -30,11 +30,11 @@ export default function About({ dealership: propDealership }) {
     const hasContactCta = Boolean(cleanWhatsapp || phone);
 
     return (
-    <PublicLayout>
-      <Head>
-        <title>À propos</title>
-        <meta name="description" content={`Découvrez l'histoire, les horaires et les coordonnées de ${name || 'notre showroom'}. Contactez-nous pour toute information.`} />
-      </Head>
+        <PublicLayout>
+            <Head>
+                <title>À propos</title>
+                <meta name="description" content={`Découvrez l'histoire, les horaires et les coordonnées de ${name || 'notre showroom'}. Contactez-nous pour toute information.`} />
+            </Head>
 
             <div className="flex flex-col w-full">
                 <AboutHero name={name} logoPath={logoPath} />

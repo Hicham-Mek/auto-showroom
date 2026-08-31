@@ -28,7 +28,7 @@ export default function VehicleDetails({ vehicle, dealership }) {
     const images = vehicle?.images?.length > 0
         ? vehicle.images.map(img => img.path)
         : vehicle?.image ? [vehicle.image]
-        : ['/placeholder-car.jpg'];
+            : [];
 
     const totalSlides = images.length;
 
@@ -87,14 +87,21 @@ export default function VehicleDetails({ vehicle, dealership }) {
             <main className="w-full pb-32">
                 {/* 1. TOP PREMIUM SPOTLIGHT HERO (Full-Bleed Cover Image) */}
                 <section
-                    className="relative w-full h-[70vh] min-h-[400px] md:h-[80vh] bg-on-background group overflow-hidden cursor-pointer"
+                    className={`relative w-full h-[70vh] min-h-[400px] md:h-[80vh] bg-on-background group overflow-hidden ${totalSlides > 0 ? 'cursor-pointer' : ''}`}
                     style={{ backgroundColor: 'rgb(20, 23, 26)' }}
-                    onClick={() => openLightbox(activeImage)}
+                    onClick={() => totalSlides > 0 && openLightbox(activeImage)}
                 >
-                    <div
-                        className="w-full h-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
-                        style={{ backgroundImage: `url('${images[activeImage]}')` }}
-                    />
+                    {totalSlides > 0 ? (
+                        <div
+                            className="w-full h-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
+                            style={{ backgroundImage: `url('${images[activeImage]}')` }}
+                        />
+                    ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-white/40 gap-3">
+                            <span className="material-symbols-outlined text-[64px]">directions_car</span>
+                            <span className="font-spec-label text-sm uppercase tracking-wider text-white/60">Aucune photo disponible</span>
+                        </div>
+                    )}
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
@@ -107,25 +114,27 @@ export default function VehicleDetails({ vehicle, dealership }) {
                     </div>
 
                     {/* Fullscreen / Photo Count Action (Top-Right) */}
-                    <div className="absolute top-4 right-4 md:top-6 md:right-8 z-20 flex items-center gap-2">
-                        {totalSlides > 1 && (
-                            <span className="bg-black/60 backdrop-blur-md text-white text-xs font-mono px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 shadow">
-                                <span className="material-symbols-outlined text-[16px] text-primary">photo_camera</span>
-                                {activeImage + 1} / {totalSlides}
-                            </span>
-                        )}
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                openLightbox(activeImage);
-                            }}
-                            className="bg-black/60 hover:bg-black/80 backdrop-blur-md text-white p-2 rounded-lg border border-white/10 transition-all flex items-center justify-center shadow"
-                            title="Plein écran"
-                            aria-label="Agrandir la photo"
-                        >
-                            <span className="material-symbols-outlined text-[20px]">fullscreen</span>
-                        </button>
-                    </div>
+                    {totalSlides > 0 && (
+                        <div className="absolute top-4 right-4 md:top-6 md:right-8 z-20 flex items-center gap-2">
+                            {totalSlides > 1 && (
+                                <span className="bg-black/60 backdrop-blur-md text-white text-xs font-mono px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-1.5 shadow">
+                                    <span className="material-symbols-outlined text-[16px] text-primary">photo_camera</span>
+                                    {activeImage + 1} / {totalSlides}
+                                </span>
+                            )}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    openLightbox(activeImage);
+                                }}
+                                className="bg-black/60 hover:bg-black/80 backdrop-blur-md text-white p-2 rounded-lg border border-white/10 transition-all flex items-center justify-center shadow"
+                                title="Plein écran"
+                                aria-label="Agrandir la photo"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">fullscreen</span>
+                            </button>
+                        </div>
+                    )}
                 </section>
 
                 {/* 2. Floating Title & Price Card */}
@@ -229,11 +238,10 @@ export default function VehicleDetails({ vehicle, dealership }) {
                                                     setActiveImage(idx);
                                                     openLightbox(idx);
                                                 }}
-                                                className={`group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer bg-[#14171a] border-2 transition-all duration-300 shadow-sm hover:shadow-lg ${
-                                                    activeImage === idx
+                                                className={`group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer bg-[#14171a] border-2 transition-all duration-300 shadow-sm hover:shadow-lg ${activeImage === idx
                                                         ? 'border-primary ring-2 ring-primary/30 scale-[1.02]'
                                                         : 'border-transparent hover:border-primary/50'
-                                                }`}
+                                                    }`}
                                             >
                                                 <img
                                                     src={img}
@@ -241,7 +249,7 @@ export default function VehicleDetails({ vehicle, dealership }) {
                                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                     loading="lazy"
                                                 />
-                                                
+
                                                 {/* Hover Overlay */}
                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                     <span className="w-9 h-9 rounded-full bg-primary text-black flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition-transform">
@@ -505,11 +513,10 @@ export default function VehicleDetails({ vehicle, dealership }) {
                                     <button
                                         key={idx}
                                         onClick={() => setLightboxIndex(idx)}
-                                        className={`w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
-                                            lightboxIndex === idx
+                                        className={`w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${lightboxIndex === idx
                                                 ? 'border-primary ring-2 ring-primary/40 scale-105'
                                                 : 'border-white/20 opacity-60 hover:opacity-100'
-                                        }`}
+                                            }`}
                                     >
                                         <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
                                     </button>

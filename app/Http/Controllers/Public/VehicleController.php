@@ -70,7 +70,7 @@ class VehicleController extends Controller
             return $image;
         });
 
-        return Inertia::render('Public/Vehicles/VehichleDetails', [
+        return Inertia::render('Public/Vehicles/VehicleDetails', [
             'vehicle' => $vehicle
         ]);
     }

@@ -1,4 +1,4 @@
-import SectionHeader from '../../Components/Public/Sectionheader';
+import SectionHeader from '../../Components/Common/SectionHeader';
 
 const FEATURES = [
     {

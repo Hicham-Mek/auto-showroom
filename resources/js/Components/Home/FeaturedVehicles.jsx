@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import VehicleCard from '../VehicleCard';
-import SectionHeader from './Sectionheader';
+import VehicleCard from '../../Components/Vehicles/VehicleCard';
+import SectionHeader from '../../Components/Common/SectionHeader';
 
 export default function FeaturedVehicles({ vehicles = [] }) {
     return (

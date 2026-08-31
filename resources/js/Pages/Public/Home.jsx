@@ -1,9 +1,9 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
-import HeroSection from '../../Components/Public/Herosection';
-import FeaturedVehicles from '../../Components/Public/Featuredvehicles';
-import StatsStrip from '../../Components/Public/Statsstrip';
-import WhyChooseUs from '../../Components/Public/Whychooseus';
+import HeroSection from '../../Components/Home/HeroSection';
+import FeaturedVehicles from '../../Components/Home/FeaturedVehicles';
+import StatsStrip from '../../Components/Home/StatsStrip';
+import WhyChooseUs from '../../Components/Home/WhyChooseUs';
 
 export default function Home({ dealership, vehicles = [], featuredVehicles, stats = [], filters = {}, makes = [] }) {
     // The backend may send a dedicated `featuredVehicles` list, or just

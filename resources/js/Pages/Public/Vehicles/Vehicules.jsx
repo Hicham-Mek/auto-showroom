@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { router, Head } from '@inertiajs/react';
 import PublicLayout from '../../../Layouts/PublicLayout';
-import VehicleCard from '../../../Components/VehicleCard';
-import Pagination from '../../../Components/Public/Pagination';
-import FilterSidebar from '../../../Components/Public/FilterSidebar';
+import VehicleCard from '../../../Components/Vehicles/VehicleCard';
+import Pagination from '../../../Components/Common/Pagination';
+import FilterSidebar from '../../../Components/Vehicles/FilterSidebar';
 
-export default function Vehicules({ vehicles, filters }) {
+export default function Vehicules({ vehicles = { data: [], links: [], total: 0 }, filters }) {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
     // Handle instant sorting
@@ -54,7 +54,7 @@ export default function Vehicules({ vehicles, filters }) {
                     </button>
 
                     <div className="font-body text-acier text-sm w-full sm:w-auto text-center sm:text-left">
-                        <span className="font-bold text-asphalt">{vehicles.total}</span> véhicule(s) disponible(s)
+                        <span className="font-bold text-asphalt">{vehicles?.total ?? 0}</span> véhicule(s) disponible(s)
                     </div>
 
                     <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -100,16 +100,16 @@ export default function Vehicules({ vehicles, filters }) {
 
                     {/* Vehicle Grid */}
                     <main className="w-full lg:w-3/4">
-                        {vehicles.data.length > 0 ? (
+                        {(vehicles?.data?.length ?? 0) > 0 ? (
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {vehicles.data.map((vehicle) => (
+                                    {vehicles?.data?.map((vehicle) => (
                                         <VehicleCard key={vehicle.id} vehicle={vehicle} />
                                     ))}
                                 </div>
 
                                 {/* Pagination */}
-                                <Pagination links={vehicles.links} />
+                                <Pagination links={vehicles?.links ?? []} />
                             </>
                         ) : (
                             <div className="bg-white p-12 text-center rounded-lg border border-beton flex flex-col items-center">

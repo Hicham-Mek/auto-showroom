@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import SpecStrip from '../Components/Public/Specstrip';
-import { getVehicleStatus } from '../Components/Public/vehicleStatus';
+import SpecStrip from '../../Components/Vehicles/SpecStrip';
+import { getVehicleStatus } from '../../Utils/vehicleStatus';
 
 export default function VehicleCard({ vehicle }) {
     const status = getVehicleStatus(vehicle.status);

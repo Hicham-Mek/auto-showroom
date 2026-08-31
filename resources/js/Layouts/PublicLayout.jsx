@@ -18,6 +18,13 @@ export default function PublicLayout({ children }) {
     const whatsappNumber = rawWhatsApp.startsWith('0') && rawWhatsApp.length === 10 ? `213${rawWhatsApp.slice(1)}` : rawWhatsApp;
     const phoneNumber = dealership?.phone ?? '';
 
+    const isLinkActive = (href) => {
+        if (href === '/') {
+            return currentPath === '/' || currentPath === '';
+        }
+        return currentPath.startsWith(href);
+    };
+
     return (
         <div className="bg-beton font-body-md text-on-surface antialiased">
             <header className="fixed top-0 w-full z-50 bg-beton border-b border-outline-variant">
@@ -42,7 +49,7 @@ export default function PublicLayout({ children }) {
 
                     <nav className="hidden md:flex items-center gap-lg">
                         {NAV_LINKS.map((link) => {
-                            const isActive = currentPath === link.href;
+                            const isActive = isLinkActive(link.href);
                             return (
                                 <Link
                                     key={link.href}
@@ -81,7 +88,7 @@ export default function PublicLayout({ children }) {
                 {menuOpen && (
                     <nav className="md:hidden flex flex-col bg-beton border-t border-outline-variant px-margin-mobile py-sm">
                         {NAV_LINKS.map((link) => {
-                            const isActive = currentPath === link.href;
+                            const isActive = isLinkActive(link.href);
                             return (
                                 <Link
                                     key={link.href}
@@ -137,7 +144,7 @@ export default function PublicLayout({ children }) {
                         </div>
                         <div className="flex flex-col gap-sm">
                             <span className="font-spec-label text-spec-label text-on-tertiary/60">INFO</span>
-                            <Link className="text-body-sm" href="/contact">
+                            <Link className="text-body-sm" href="/a-propos">
                                 Contact
                             </Link>
                             <Link className="text-body-sm" href="/mentions-legales">
@@ -148,12 +155,21 @@ export default function PublicLayout({ children }) {
                             <span className="font-spec-label text-spec-label text-on-tertiary/60">
                                 SOCIAL
                             </span>
-                            <a className="text-body-sm" href={dealership?.facebook ?? '#'} target="_blank" rel="noreferrer">
-                                Facebook
-                            </a>
-                            <a className="text-body-sm" href={dealership?.instagram ?? '#'} target="_blank" rel="noreferrer">
-                                Instagram
-                            </a>
+                            {(dealership?.facebook_url || dealership?.facebook) && (
+                                <a className="text-body-sm hover:text-phare transition-colors" href={dealership.facebook_url || dealership.facebook} target="_blank" rel="noreferrer">
+                                    Facebook
+                                </a>
+                            )}
+                            {(dealership?.instagram_url || dealership?.instagram) && (
+                                <a className="text-body-sm hover:text-phare transition-colors" href={dealership.instagram_url || dealership.instagram} target="_blank" rel="noreferrer">
+                                    Instagram
+                                </a>
+                            )}
+                            {(dealership?.tiktok_url || dealership?.tiktok) && (
+                                <a className="text-body-sm hover:text-phare transition-colors" href={dealership.tiktok_url || dealership.tiktok} target="_blank" rel="noreferrer">
+                                    TikTok
+                                </a>
+                            )}
                         </div>
                     </div>
 
