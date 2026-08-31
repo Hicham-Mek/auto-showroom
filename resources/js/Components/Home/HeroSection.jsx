@@ -4,7 +4,7 @@ export default function HeroSection({ dealership, makes = [], filters = {} }) {
     const phoneNumber = dealership?.phone ?? '';
 
     return (
-        <section className="w-full h-[90vh] relative bg-asphalt -mt-16 pt-24 pb-16 md:pt-32 md:pb-20 bg-grid-line">
+        <section className="w-full h-[100vh] relative bg-asphalt -mt-16 pt-24 pb-16 md:pt-32 md:pb-20 bg-grid-line">
             <div className="relative z-10 w-full max-w-7xl mx-auto px-margin-mobile lg:px-lg flex flex-col items-center text-center">
                 {dealership?.logo_path && (
                     <div className="bg-surface-container-lowest/10 p-3 rounded-xl backdrop-blur-md mb-6 border border-white/10 shadow-lg">
