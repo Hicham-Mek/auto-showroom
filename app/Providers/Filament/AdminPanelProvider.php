@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->brandName('AutoShowroom')
+            ->favicon(asset('favicon.svg'))
             ->brandLogo(fn () => view('filament.admin.logo'))
             ->brandLogoHeight('2.75rem')
             ->colors([
